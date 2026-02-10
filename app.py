@@ -7,8 +7,7 @@ from servicios import SERVICIOS
 # =====================
 st.set_page_config(
     page_title="RF Servicios",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
 st.title("📋 RF – Gestión de Servicios")
@@ -35,26 +34,31 @@ if "carrito" not in st.session_state:
     st.session_state.carrito = []
 
 # =====================
-# PREPARAR OPCIONES
+# BUSCADOR SERVICIOS
 # =====================
-labels = [
-    f"{s['id']} — {s['nombre']}"
-    for s in SERVICIOS
-]
+labels = {
+    i: f"{s['id']} — {s['nombre']}"
+    for i, s in enumerate(SERVICIOS)
+}
 
 # =====================
-# SIDEBAR
+# LAYOUT PRINCIPAL
 # =====================
-with st.sidebar:
-    st.header("🛠️ Selección de servicio")
+col_left, col_right = st.columns([3, 2])
+
+# =====================
+# COLUMNA IZQUIERDA
+# =====================
+with col_left:
+    st.subheader("🔍 Selección de servicio")
 
     idx = st.selectbox(
-        "Buscar servicio",
-        options=range(len(labels)),
+        "Busca y selecciona un servicio",
+        options=list(labels.keys()),
         format_func=lambda i: labels[i]
     )
 
-    servicio_sel = SERVICIOS[idx]
+    servicio = SERVICIOS[idx]
 
     cantidad = st.number_input(
         "Cantidad",
@@ -63,49 +67,34 @@ with st.sidebar:
         value=1
     )
 
-    tiempo_total = servicio_sel["tiempo_min"] * cantidad
+    tiempo_total = servicio["tiempo_min"] * cantidad
 
     st.divider()
-    st.markdown("### ⏱ Resumen")
-    st.write(f"**Tiempo unitario:** {formatear_tiempo(servicio_sel['tiempo_min'])}")
-    st.write(f"**Tiempo total:** {formatear_tiempo(tiempo_total)}")
+
+    st.subheader(servicio["nombre"])
+
+    st.markdown("**Descripción**")
+    st.info(servicio["descripcion"])
+
+    c1, c2, c3 = st.columns(3)
+    c1.metric("⏱ Unitario", formatear_tiempo(servicio["tiempo_min"]))
+    c2.metric("📦 Cantidad", cantidad)
+    c3.metric("⌛ Total", formatear_tiempo(tiempo_total))
 
     if st.button("➕ Agregar al RF", use_container_width=True):
         st.session_state.carrito.append({
-            "Servicio": servicio_sel["nombre"],
+            "Servicio": servicio["nombre"],
             "Cantidad": cantidad,
-            "Tiempo unitario (min)": servicio_sel["tiempo_min"],
+            "Tiempo unitario (min)": servicio["tiempo_min"],
             "Tiempo total (min)": tiempo_total
         })
         st.success("Servicio agregado al RF")
 
 # =====================
-# TABS
+# COLUMNA DERECHA – RF
 # =====================
-tab1, tab2 = st.tabs(["🧾 Servicio", "📦 RF"])
-
-# =====================
-# TAB SERVICIO
-# =====================
-with tab1:
-    st.subheader(servicio_sel["nombre"])
-
-    col1, col2 = st.columns([2, 1])
-
-    with col1:
-        with st.expander("📄 Descripción del servicio", expanded=True):
-            st.text(servicio_sel["descripcion"])
-
-    with col2:
-        st.metric("⏱ Tiempo base", formatear_tiempo(servicio_sel["tiempo_min"]))
-        st.metric("📦 Cantidad", cantidad)
-        st.metric("⌛ Total", formatear_tiempo(tiempo_total))
-
-# =====================
-# TAB RF
-# =====================
-with tab2:
-    st.subheader("📦 Request For (RF)")
+with col_right:
+    st.subheader("📦 RF Actual")
 
     if st.session_state.carrito:
         df = pd.DataFrame(st.session_state.carrito)
@@ -115,32 +104,25 @@ with tab2:
 
         st.dataframe(
             df[["Servicio", "Cantidad", "Tiempo unitario", "Tiempo total"]],
+            hide_index=True,
             use_container_width=True,
-            hide_index=True
+            height=350
         )
 
         total_rf = df["Tiempo total (min)"].sum()
-        st.divider()
-        st.metric("⏱ Tiempo total RF", formatear_tiempo(total_rf))
+        st.metric("⏱ Total RF", formatear_tiempo(total_rf))
 
         st.divider()
-        st.markdown("### 🗑️ Eliminar servicio del RF")
 
-        # Selector de eliminación
         idx_delete = st.selectbox(
-            "Selecciona el servicio a eliminar",
+            "Eliminar servicio",
             options=range(len(st.session_state.carrito)),
             format_func=lambda i: st.session_state.carrito[i]["Servicio"]
         )
 
-        col_del_1, col_del_2 = st.columns([1, 3])
-
-        with col_del_1:
-            if st.button("🗑️ Eliminar"):
-                st.session_state.carrito.pop(idx_delete)
-                st.success("Servicio eliminado del RF")
-                st.rerun()
+        if st.button("🗑️ Eliminar seleccionado", use_container_width=True):
+            st.session_state.carrito.pop(idx_delete)
+            st.rerun()
 
     else:
-        st.info("Aún no hay servicios en el RF")
-
+        st.info("Aún no has agregado servicios al RF")

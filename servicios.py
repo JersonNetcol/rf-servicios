@@ -1438,7 +1438,7 @@ SERVICIOS = [
         "tiempo_min": 10
     },
     {
-        "id": "None",
+        "id": "10,4",
         "nombre": "Desinstalación de cajas de paso redonda, rectangular, cuadrada, hexagonal en PVC o acero galvanizado - Datacenter",
         "descripcion": (
             "Por cada implementación que se realice para la desinstalación de una caja de paso o caja de conexión eléctrica con medidas 5800, 10X10, 20X20, 30X30, 40X40, 50X50, se realizará la instalación de una, teniendo en cuenta que la instalación de la tubería no incluye esta actividad.\n"
@@ -1460,7 +1460,7 @@ SERVICIOS = [
         "tiempo_min": 20
     },
     {
-        "id": "None",
+        "id": "10,5",
         "nombre": "Instalación y/o cambio de baldosas - Datacenter",
         "descripcion": (
             "La solicitud de la actividad se realizará por medio de Service Manager. Para piso falso de lisa a lisa, de lisa a perforada, de perforada a perforada de mayor diámetro y/o de perforada a lisa frente a los gabientes o racks.\n"
