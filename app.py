@@ -75,7 +75,7 @@ if st.session_state.modo_factura:
 # =====================
 # VISTA NORMAL
 # =====================
-st.markdown("<h2>🧮 Calculadora LPU</h2>", unsafe_allow_html=True)
+st.markdown("<h3>🧮 Calculadora LPU</h3>", unsafe_allow_html=True)
 
 labels = {
     i: f"{s['id']} — {s['nombre']}"
@@ -88,7 +88,10 @@ col_left, col_right = st.columns([3, 2])
 # COLUMNA IZQUIERDA (ESTÁTICA)
 # =====================
 with col_left:
-    st.subheader("🔍 Selección de servicio")
+    st.markdown(
+        "<p style='font-size:25px; font-weight:600;'>🔍 Selección de servicio</p>",
+        unsafe_allow_html=True
+    )
 
     idx = st.selectbox(
         "Buscar servicio",
