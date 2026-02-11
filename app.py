@@ -75,7 +75,7 @@ if st.session_state.modo_factura:
 # =====================
 # VISTA NORMAL
 # =====================
-st.title("🧮 Calculadora LPU")
+st.markdown("<h2>🧮 Calculadora LPU</h2>", unsafe_allow_html=True)
 
 labels = {
     i: f"{s['id']} — {s['nombre']}"
